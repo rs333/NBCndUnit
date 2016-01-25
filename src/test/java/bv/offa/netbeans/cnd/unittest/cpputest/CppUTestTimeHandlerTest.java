@@ -1,6 +1,6 @@
 /*
  * NBCndUnit - C/C++ unit tests for NetBeans.
- * Copyright (C) 2015  offa
+ * Copyright (C) 2015-2016  offa
  * 
  * This file is part of NBCndUnit.
  *
@@ -32,14 +32,14 @@ import org.netbeans.modules.gsf.testrunner.api.Testcase;
 
 public class CppUTestTimeHandlerTest
 {
-    private static final TestSessionInformation dontCareInfo = new TestSessionInformation();
+    private static final TestSessionInformation DONT_CARE_INFO = new TestSessionInformation();
     private CppUTestTimeHandler handler;
     
     
     @Before
     public void setUp()
     {
-        handler = new CppUTestTimeHandler(dontCareInfo);
+        handler = new CppUTestTimeHandler(DONT_CARE_INFO);
     }
     
     @Test

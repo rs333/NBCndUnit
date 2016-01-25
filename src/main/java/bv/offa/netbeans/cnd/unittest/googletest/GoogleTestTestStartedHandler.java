@@ -1,6 +1,6 @@
 /*
  * NBCndUnit - C/C++ unit tests for NetBeans.
- * Copyright (C) 2015  offa
+ * Copyright (C) 2015-2016  offa
  * 
  * This file is part of NBCndUnit.
  *
@@ -36,7 +36,7 @@ import org.netbeans.modules.gsf.testrunner.api.Testcase;
  */
 class GoogleTestTestStartedHandler extends TestRecognizerHandler
 {
-    private static final TestFramework testFramework = TestFramework.GOOGLETEST;
+    private static final TestFramework TESTFRAMEWORK = TestFramework.GOOGLETEST;
     
     public GoogleTestTestStartedHandler()
     {
@@ -55,7 +55,7 @@ class GoogleTestTestStartedHandler extends TestRecognizerHandler
     public void updateUI(Manager mngr, TestSession ts)
     {
         final Matcher m = getMatcher();
-        final Testcase testcase = new CndTestCase(m.group(2), testFramework, ts);
+        final Testcase testcase = new CndTestCase(m.group(2), TESTFRAMEWORK, ts);
         testcase.setClassName(m.group(1));
         ts.addTestCase(testcase);
     }
