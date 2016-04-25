@@ -42,32 +42,36 @@ public class GoogleTestTestStartedHandlerTest
     }
     
     @Test
-    public void testMatchesTestCase()
+    public void matchesTestCase()
     {
         assertTrue(handler.matches("[ RUN      ] TestSuite.testCase"));
     }
     
     @Test
-    public void testParseDataTestCase()
+    public void parseDataTestCase()
     {
-        final String input = "[ RUN      ] TestSuite.testCase";
-        Matcher m = handler.match(input);
-        
+        Matcher m = handler.match("[ RUN      ] TestSuite.testCase");
         assertTrue(m.find());
         assertEquals("TestSuite", m.group(1));
         assertEquals("testCase", m.group(2));
     }
     
     @Test
-    public void testUpdateUIAddsTestCase()
+    public void parseDataTestCaseParameterized()
     {
-        final String input = "[ RUN      ] TestSuite.testCase";
-        Matcher m = handler.match(input);
+        Matcher m = handler.match("[ RUN      ] withParameterImpl/TestSuite.testCase/0");
         assertTrue(m.find());
-
+        assertEquals("withParameterImpl/TestSuite", m.group(1));
+        assertEquals("testCase", m.group(2));
+    }
+    
+    @Test
+    public void updateUIAddsTestCase()
+    {
+        Matcher m = handler.match("[ RUN      ] TestSuite.testCase");
+        assertTrue(m.find());
         TestSession session = mock(TestSession.class);
         handler.updateUI(null, session);
-        
         verify(session).addTestCase(argThat(
                 new TestCaseArgumentMatcher("testCase", TestFramework.GOOGLETEST, session)));
     }

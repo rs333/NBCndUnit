@@ -42,8 +42,8 @@ class GoogleTestTestFinishedHandler extends TestRecognizerHandler
 
     public GoogleTestTestFinishedHandler()
     {
-        super("^.*?\\[  (     OK|FAILED ) \\].*? (.+?)\\.(.+?)"
-                + " \\(([0-9]+?) ms\\)$", true, true);
+        super("^.*?\\[  (     OK|FAILED ) \\].*? (.+?)\\.(.+?)(?:/.+)??"
+            + " \\(([0-9]+?) ms\\)$", true, true);
     }
 
 
@@ -62,9 +62,9 @@ class GoogleTestTestFinishedHandler extends TestRecognizerHandler
     {
         final Matcher m = getMatcher();
         final Testcase testCase = ts.getCurrentTestCase();
-
+        
         if( testCase != null && testCase.getClassName().equals(m.group(2)) 
-                && testCase.getName().equals(m.group(3)) )
+                && testCase.getName().endsWith(m.group(3)) )
         {
             long time = Long.valueOf(m.group(4));
             testCase.setTimeMillis(time);
