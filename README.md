@@ -6,39 +6,37 @@
 [![NetBeans](https://img.shields.io/badge/netbeans-8.1-lightgrey.svg)](http://plugins.netbeans.org/plugin/57174/nbcndunit)
 [![Java](https://img.shields.io/badge/java-1.7-green.svg)](http://openjdk.java.net/)
 
-**NBCndUnit** is a [***NetBeans***](https://netbeans.org) plugin for ***C/C++ unit testing***. It integrates the [*CppUTest*](https://cpputest.github.io/), [*GoogleTest (gtest) / GoogleMock (gmock)*](https://github.com/google/googletest) and [*libunittest C++*](http://libunittest.sourceforge.net/) unit testing frameworks.
-
-**Stable releases** are available at the [NetBeans Plugin Portal](http://plugins.netbeans.org/plugin/57174/nbcndunit).
+**NBCndUnit** is a [***NetBeans***](https://netbeans.org) plugin for ***C/C++ unit testing***. It integrates the [_**CppUTest**_](https://cpputest.github.io/), [_**GoogleTest** (gtest) / **GoogleMock** (gmock)_](https://github.com/google/googletest) and [_**libunittest C++**_](http://libunittest.sourceforge.net/) unit testing frameworks.
 
 
-## Requirements
+# Requirements
 
  - [**NetBeans 8.1**](https://netbeans.org)
  - **Testing framework(s)**
 
 
-## Supported C/C++ unit testing frameworks
+# Supported C/C++ unit testing frameworks
 
  - [CppUTest](https://cpputest.github.io/)
  - [GoogleTest (gtest) / GoogleMock (gmock)](https://github.com/google/googletest)
  - [libunittest C++](http://libunittest.sourceforge.net/)
 
 
-## Installation
+# Installation
 
 The Plugin is available through the **Plugin Manager** (*Tools → Plugins → Available Plugins*).
 
 As an alternative, it’s also possible to download the *NBM* manually from the [**NetBeans Plugin Portal**](http://plugins.netbeans.org/plugin/57174/nbcndunit).
 
 
-## Update
+# Update
 
 Updates are delivered as usual by the **NetBeans Updater**.
 
 
 
 
-## Getting started
+# Getting started
 
  1. **Create** a new NetBeans C/C++ **project**
  1. **Add** unit testing **framework** (binaries and headers) to the test settings
@@ -109,7 +107,40 @@ int main(int argc, char** argv)
 ```
 
 
-## License
+# Using existing Projects
+
+NetBeans projects created from ***existing projects*** (eg. using custom Makefiles, CMake, …) do *not* have Test Support enabled by default.
+
+To enable it, there are ***two Make-Targets*** and a ***configuration update*** required. For more information on this, please see [***Wiki → Using exsiting projects***](https://github.com/offa/NBCndUnit/wiki/Using-existing-projects).
+
+_**Note:** This fature is currently **experimental**!_
+
+
+## Project requirements
+
+The project must have these Make-Targets:
+
+| Target            |                          |
+|-------------------|--------------------------|
+| **`build-tests`** | builds the tests, executed before running the tests (can be empty) |
+| **`test`**        | ***executes*** the tests *(verbose output)* |
+
+***Note:*** CMake has `make test` reserved, please see Wiki for a workaround.
+
+
+## Enable Test Support
+
+In addition, the Netbeans Project configuration must contain a Test Files Folder. The project can be upgraded using the ***New File Wizzard*** for Unit Test / Test Main files:
+
+**`New Files → Unit Tests → <select any>`** and *enable* **`Configure custom Project`**
+
+A *Test Files* folder is added to the NetBeans project – not visible at file level.
+
+This step is needed only once per project, though doing this more than once has no effect.
+
+
+
+# License
 
 **GNU General Public License (GPL)**
 
