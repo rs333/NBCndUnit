@@ -18,7 +18,7 @@
  * along with NBCndUnit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package bv.offa.netbeans.cnd.unittest.cpputest;
+package bv.offa.netbeans.cnd.unittest.googletest;
 
 import bv.offa.netbeans.cnd.unittest.api.CndTestCase;
 import bv.offa.netbeans.cnd.unittest.api.CndTestHandler;
@@ -27,45 +27,26 @@ import bv.offa.netbeans.cnd.unittest.api.TestFramework;
 import org.netbeans.modules.gsf.testrunner.api.TestSession;
 
 /**
- * The class {@code CppUTestErrorHandler} handles test errors and their
- * information.
+ * The class {@code GoogleTestTestFinishedHandler} handles the finish of a
+ * test case.
  * 
  * @author offa
  */
-class CppUTestErrorHandler extends CndTestHandler
+public class GoogleTestErrorHandler extends CndTestHandler
 {
     private static final int GROUP_FILE = 1;
     private static final int GROUP_LINE = 2;
-    private static final int GROUP_SUITE = 3;
-    private static final int GROUP_CASE = 4;
     
-    public CppUTestErrorHandler(TestSessionInformation info)
+    public GoogleTestErrorHandler()
     {
-        super(TestFramework.CPPUTEST, "^(.+?)\\:([0-9]+?)\\: error\\: Failure in "
-                                    + "TEST\\(([^, ]+?), ([^, ]+?)\\)$");
+        super(TestFramework.GOOGLETEST, "^(.+?):([0-9]+?): Failure$");
     }
-
-
     
-    /**
-     * Updates the UI.
-     * 
-     * @param manager       Manager Adapter
-     * @param session       Test session
-     */
     @Override
     public void updateUI(ManagerAdapter manager, TestSession session)
     {
-        CndTestCase testCase = currentTestCase(session);
-        final String suiteName = getMatchGroup(GROUP_SUITE);
-        final String caseName = getMatchGroup(GROUP_CASE);
-        
-        if( isSameTestCase(testCase, caseName, suiteName) == true )
-        {
-            final String file = getMatchGroup(GROUP_FILE);
-            final String lineNumber = getMatchGroup(GROUP_LINE);
-            testCase.setError(file, Integer.valueOf(lineNumber));
-        }
+        final CndTestCase testCase = currentTestCase(session);
+        testCase.setError(getMatchGroup(GROUP_FILE), Integer.valueOf(getMatchGroup(GROUP_LINE)));
     }
-
+    
 }
