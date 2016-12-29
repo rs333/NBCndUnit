@@ -23,9 +23,9 @@ package bv.offa.netbeans.cnd.unittest.googletest;
 import bv.offa.netbeans.cnd.unittest.api.CndTestHandler;
 import bv.offa.netbeans.cnd.unittest.api.TestFramework;
 import bv.offa.netbeans.cnd.unittest.ui.TestRunnerUINodeFactory;
-import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
+import org.junit.Test;
 import org.netbeans.modules.cnd.testrunner.spi.TestHandlerFactory;
 import org.netbeans.modules.cnd.testrunner.spi.TestRecognizerHandler;
 import org.netbeans.modules.gsf.testrunner.ui.api.Manager;
@@ -60,6 +60,13 @@ public class GoogleTestTestHandlerFactoryTest
         assertTrue(Manager.getInstance().getNodeFactory() instanceof TestRunnerUINodeFactory);
     }
 
+    @Test
+    public void factorySetsFrameWork()
+    {
+        factory.createHandlers();
+        assertEquals(TestFramework.GOOGLETEST.getName(), Manager.getInstance().getTestingFramework() );
+    }
+    
     @Test
     public void allHandlersForFramework()
     {

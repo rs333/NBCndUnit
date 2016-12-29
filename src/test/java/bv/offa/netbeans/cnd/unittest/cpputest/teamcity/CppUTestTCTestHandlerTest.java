@@ -1,7 +1,7 @@
 /*
  * NBCndUnit - C/C++ unit tests for NetBeans.
  * Copyright (C) 2015-2016  offa
- * 
+ *
  * This file is part of NBCndUnit.
  *
  * NBCndUnit is free software: you can redistribute it and/or modify
@@ -18,62 +18,57 @@
  * along with NBCndUnit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package bv.offa.netbeans.cnd.unittest.googletest;
+package bv.offa.netbeans.cnd.unittest.cpputest.teamcity;
 
-import bv.offa.netbeans.cnd.unittest.api.CndTestCase;
-import bv.offa.netbeans.cnd.unittest.api.FailureInfo;
+import bv.offa.netbeans.cnd.unittest.api.CndTestSuite;
 import bv.offa.netbeans.cnd.unittest.api.ManagerAdapter;
 import bv.offa.netbeans.cnd.unittest.api.TestFramework;
 import static bv.offa.netbeans.cnd.unittest.testhelper.Helper.checkedMatch;
-import static bv.offa.netbeans.cnd.unittest.testhelper.Helper.createCurrentTestCase;
-import static bv.offa.netbeans.cnd.unittest.testhelper.TestMatcher.hasError;
+import static bv.offa.netbeans.cnd.unittest.testhelper.TestMatcher.frameworkIs;
+import static bv.offa.netbeans.cnd.unittest.testhelper.TestMatcher.matchesTestCase;
 import java.util.regex.Matcher;
-import org.junit.After;
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import org.netbeans.modules.gsf.testrunner.api.TestSession;
 
-public class GoogleTestErrorHandlerTest
+public class CppUTestTCTestHandlerTest
 {
-    private static final TestFramework FRAMEWORK = TestFramework.GOOGLETEST;
-    private GoogleTestErrorHandler handler;
+
+    private static final TestFramework FRAMEWORK = TestFramework.CPPUTEST_TC;
+    private CppUTestTCTestStartedHandler handler;
     private TestSession session;
     private ManagerAdapter manager;
-    
+
     @Before
     public void setUp()
     {
-        handler = new GoogleTestErrorHandler();
+        handler = new CppUTestTCTestStartedHandler();
         session = mock(TestSession.class);
         manager = mock(ManagerAdapter.class);
     }
 
-    @After
-    public void tearDown()
+    @Test
+    public void parseDataTestCase()
     {
+        Matcher m = checkedMatch(handler, "##teamcity[testStarted name='testCase']");
+        assertEquals("testCase", m.group(1));
     }
 
     @Test
-    public void parseDataFailure()
+    public void updateUIAddsTestCase()
     {
-        Matcher m = checkedMatch(handler, "test/Example.cpp:38: Failure");
-        assertEquals("test/Example.cpp", m.group(1));
-        assertEquals("38", m.group(2));
-    }
-    
-    @Test
-    public void updateUISetsFailureInfo()
-    {
-        CndTestCase testCase = createCurrentTestCase("TestSuite", "testCase", FRAMEWORK, session);
-        checkedMatch(handler, "test/Example.cpp:38: Failure");
+        checkedMatch(handler, "##teamcity[testStarted name='testCase']");
+        CndTestSuite suite = new CndTestSuite("TestSuite", FRAMEWORK);
+        when(session.getCurrentSuite()).thenReturn(suite);
         handler.updateUI(manager, session);
-        assertThat(testCase, hasError());
-        FailureInfo failure = testCase.getFailureInfo();
-        assertEquals("test/Example.cpp", failure.getFile());
-        assertEquals(38, failure.getLine());
-        assertEquals("test/Example.cpp:38", testCase.getTrouble().getStackTrace()[0]);
+        verify(session).addTestCase(argThat(allOf(matchesTestCase("testCase", "TestSuite"),
+                                                    frameworkIs(FRAMEWORK))));
     }
 
 }

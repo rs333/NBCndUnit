@@ -1,7 +1,7 @@
 /*
  * NBCndUnit - C/C++ unit tests for NetBeans.
  * Copyright (C) 2015-2016  offa
- * 
+ *
  * This file is part of NBCndUnit.
  *
  * NBCndUnit is free software: you can redistribute it and/or modify
@@ -18,18 +18,31 @@
  * along with NBCndUnit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package bv.offa.netbeans.cnd.unittest.googletest;
+package bv.offa.netbeans.cnd.unittest.cpputest.teamcity;
 
-import static org.junit.Assert.*;
-import org.junit.Test;
+import org.netbeans.modules.cnd.testrunner.spi.TestHandlerFactory;
 import org.netbeans.modules.cnd.testrunner.spi.TestHandlerFactoryProvider;
+import org.openide.util.lookup.ServiceProvider;
 
-public class GoogleTestTestHandlerFactoryProviderTest
+/**
+ * The class {@code CppUTestTCTestHandlerFactoryProvider} implements a service
+ * that provides test handler for <i>CppUTest (TeamCity)</i> unit tests.
+ *
+ * @author offa
+ */
+@ServiceProvider(service = TestHandlerFactoryProvider.class)
+public class CppUTestTCTestHandlerFactoryProvider implements TestHandlerFactoryProvider
 {
-    @Test
-    public void getFactoryReturnsInstance()
+    
+    /**
+     * Creates a test handler factory.
+     *
+     * @return  Test handler factory
+     */
+    @Override
+    public TestHandlerFactory getFactory()
     {
-        TestHandlerFactoryProvider provider = new GoogleTestTestHandlerFactoryProvider();
-        assertEquals(GoogleTestTestHandlerFactory.class, provider.getFactory().getClass());
+        return new CppUTestTCTestHandlerFactory();
     }
+
 }

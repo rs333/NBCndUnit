@@ -1,7 +1,7 @@
 /*
  * NBCndUnit - C/C++ unit tests for NetBeans.
  * Copyright (C) 2015-2016  offa
- * 
+ *
  * This file is part of NBCndUnit.
  *
  * NBCndUnit is free software: you can redistribute it and/or modify
@@ -22,31 +22,33 @@ package bv.offa.netbeans.cnd.unittest.api;
 
 /**
  * The enum {@code TestFramework} represents test frameworks.
- * 
+ *
  * @author offa
  */
 public enum TestFramework
 {
     /** CppUTest. */
     CPPUTEST("CppUTest"),
+    /** CppUTest (TeamCity) */
+    CPPUTEST_TC("CppUTest (TeamCity)"),
     /** GoogleTest / GoogleMock. */
     GOOGLETEST("GoogleTest"),
     /** LibunittestC++. */
     LIBUNITTESTCPP("LibunittestCpp");
-    
-    
+
+
     private final String name;
-    
-    
+
+
     private TestFramework(String name)
     {
         this.name = name;
     }
-    
-    
+
+
     /**
      * Returns the name of the framework.
-     * 
+     *
      * @return  Name
      */
     public String getName()

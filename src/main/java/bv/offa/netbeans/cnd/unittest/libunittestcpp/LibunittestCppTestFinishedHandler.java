@@ -23,7 +23,6 @@ package bv.offa.netbeans.cnd.unittest.libunittestcpp;
 import bv.offa.netbeans.cnd.unittest.TestSupportUtils;
 import bv.offa.netbeans.cnd.unittest.api.CndTestCase;
 import bv.offa.netbeans.cnd.unittest.api.CndTestHandler;
-import bv.offa.netbeans.cnd.unittest.api.CndTestSuite;
 import bv.offa.netbeans.cnd.unittest.api.ManagerAdapter;
 import bv.offa.netbeans.cnd.unittest.api.TestFramework;
 import org.netbeans.modules.gsf.testrunner.api.TestSession;
@@ -34,7 +33,7 @@ import org.netbeans.modules.gsf.testrunner.api.TestSession;
  * 
  * @author offa
  */
-class LibunittestCppTestFinishedHandler extends CndTestHandler
+public class LibunittestCppTestFinishedHandler extends CndTestHandler
 {
     private static final int GROUP_SUITE = 1;
     private static final int GROUP_CASE = 2;

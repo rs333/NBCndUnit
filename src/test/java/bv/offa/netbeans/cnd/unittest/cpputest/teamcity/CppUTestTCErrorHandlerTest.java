@@ -1,7 +1,7 @@
 /*
  * NBCndUnit - C/C++ unit tests for NetBeans.
  * Copyright (C) 2015-2016  offa
- * 
+ *
  * This file is part of NBCndUnit.
  *
  * NBCndUnit is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
  * along with NBCndUnit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package bv.offa.netbeans.cnd.unittest.googletest;
+package bv.offa.netbeans.cnd.unittest.cpputest.teamcity;
 
 import bv.offa.netbeans.cnd.unittest.api.CndTestCase;
 import bv.offa.netbeans.cnd.unittest.api.FailureInfo;
@@ -28,52 +28,52 @@ import static bv.offa.netbeans.cnd.unittest.testhelper.Helper.checkedMatch;
 import static bv.offa.netbeans.cnd.unittest.testhelper.Helper.createCurrentTestCase;
 import static bv.offa.netbeans.cnd.unittest.testhelper.TestMatcher.hasError;
 import java.util.regex.Matcher;
-import org.junit.After;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import static org.mockito.Mockito.mock;
 import org.netbeans.modules.gsf.testrunner.api.TestSession;
 
-public class GoogleTestErrorHandlerTest
+public class CppUTestTCErrorHandlerTest
 {
-    private static final TestFramework FRAMEWORK = TestFramework.GOOGLETEST;
-    private GoogleTestErrorHandler handler;
+    private static final TestFramework FRAMEWORK = TestFramework.CPPUTEST_TC;
+    private CppUTestTCErrorHandler handler;
     private TestSession session;
     private ManagerAdapter manager;
-    
+
     @Before
     public void setUp()
     {
-        handler = new GoogleTestErrorHandler();
+        handler = new CppUTestTCErrorHandler();
         session = mock(TestSession.class);
         manager = mock(ManagerAdapter.class);
-    }
-
-    @After
-    public void tearDown()
-    {
     }
 
     @Test
     public void parseDataFailure()
     {
-        Matcher m = checkedMatch(handler, "test/Example.cpp:38: Failure");
-        assertEquals("test/Example.cpp", m.group(1));
-        assertEquals("38", m.group(2));
+        Matcher m = checkedMatch(handler, "##teamcity[testFailed name='testCase' "
+                                            + "message='test/TestSuite.cpp:25' "
+                                            + "details='Expected failure message']");
+        assertEquals("testCase", m.group(1));
+        assertEquals("test/TestSuite.cpp", m.group(2));
+        assertEquals("25", m.group(3));
+        assertEquals("Expected failure message", m.group(4));
     }
-    
+
     @Test
     public void updateUISetsFailureInfo()
     {
         CndTestCase testCase = createCurrentTestCase("TestSuite", "testCase", FRAMEWORK, session);
-        checkedMatch(handler, "test/Example.cpp:38: Failure");
+        checkedMatch(handler, "##teamcity[testFailed name='testCase' "
+                                + "message='test/TestSuite.cpp:25' "
+                                + "details='Expected failure message']");
         handler.updateUI(manager, session);
         assertThat(testCase, hasError());
         FailureInfo failure = testCase.getFailureInfo();
-        assertEquals("test/Example.cpp", failure.getFile());
-        assertEquals(38, failure.getLine());
-        assertEquals("test/Example.cpp:38", testCase.getTrouble().getStackTrace()[0]);
+        assertEquals("test/TestSuite.cpp", failure.getFile());
+        assertEquals(25, failure.getLine());
+        assertEquals("test/TestSuite.cpp:25", testCase.getTrouble().getStackTrace()[0]);
     }
 
 }

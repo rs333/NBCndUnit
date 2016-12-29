@@ -19,12 +19,10 @@
  */
 package bv.offa.netbeans.cnd.unittest.googletest;
 
-import bv.offa.netbeans.cnd.unittest.api.CndTestCase;
 import bv.offa.netbeans.cnd.unittest.api.CndTestHandler;
 import bv.offa.netbeans.cnd.unittest.api.ManagerAdapter;
 import bv.offa.netbeans.cnd.unittest.api.TestFramework;
 import org.netbeans.modules.gsf.testrunner.api.TestSession;
-import org.netbeans.modules.gsf.testrunner.api.Testcase;
 
 /**
  * The class {@code GoogleTestTestStartedHandler} handles the start of a test
@@ -32,7 +30,7 @@ import org.netbeans.modules.gsf.testrunner.api.Testcase;
  *
  * @author offa
  */
-class GoogleTestTestStartedHandler extends CndTestHandler
+public class GoogleTestTestStartedHandler extends CndTestHandler
 {
     private static final int GROUP_SUITE = 1;
     private static final int GROUP_CASE = 2;

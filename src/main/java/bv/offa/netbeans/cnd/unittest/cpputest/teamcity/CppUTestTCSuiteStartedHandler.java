@@ -18,34 +18,27 @@
  * along with NBCndUnit.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package bv.offa.netbeans.cnd.unittest.cpputest;
+package bv.offa.netbeans.cnd.unittest.cpputest.teamcity;
 
-import bv.offa.netbeans.cnd.unittest.api.CndTestCase;
 import bv.offa.netbeans.cnd.unittest.api.CndTestHandler;
 import bv.offa.netbeans.cnd.unittest.api.ManagerAdapter;
 import bv.offa.netbeans.cnd.unittest.api.TestFramework;
 import org.netbeans.modules.gsf.testrunner.api.TestSession;
 
 /**
- * The class {@code CppUTestHandler} handles the test output.
+ * The class {@code CppUTestTCSuiteStartedHandler} handles the start of a
+ * test suite.
  *
  * @author offa
  */
-public class CppUTestTestHandler extends CndTestHandler
+public class CppUTestTCSuiteStartedHandler extends CndTestHandler
 {
-    private static final int GROUP_IGNORED = 1;
-    private static final int GROUP_SUITE = 2;
-    private static final int GROUP_CASE = 3;
-    private static final int GROUP_TIME = 4;
-    private static final int GROUP_TIME_VALUE = 5;
+    private static final int GROUP_SUITE = 1;
     private static boolean firstSuite;
-    private final TestSessionInformation info;
 
-    public CppUTestTestHandler(TestSessionInformation info)
+    public CppUTestTCSuiteStartedHandler()
     {
-        super(TestFramework.CPPUTEST, "^(IGNORE_)??TEST\\(([^, ]+?), ([^, ]+?)\\)"
-                                    + "( \\- ([0-9]+?) ms)?$");
-        this.info = info;
+        super(TestFramework.CPPUTEST_TC, "^##teamcity\\[testSuiteStarted name='(.+?)'\\]$");
         suiteFinished();
     }
 
@@ -66,20 +59,6 @@ public class CppUTestTestHandler extends CndTestHandler
             updateSessionState(manager, session);
             startNewTestSuite(suiteName, session, manager);
         }
-
-        final String caseName = getMatchGroup(GROUP_CASE);
-        CndTestCase testCase = startNewTestCase(caseName, suiteName, session);
-        updateStatus(testCase);
-        updateTime(testCase);
-    }
-
-
-    /**
-     * Indicates the current suite has finished.
-     */
-    static void suiteFinished()
-    {
-        CppUTestTestHandler.firstSuite = true;
     }
 
 
@@ -104,34 +83,11 @@ public class CppUTestTestHandler extends CndTestHandler
 
 
     /**
-     * Updates the test time.
-     *
-     * @param testCase  Test Case
+     * Indicates the current suite has finished.
      */
-    private void updateTime(CndTestCase testCase)
+    static void suiteFinished()
     {
-        if( getMatchGroup(GROUP_TIME) != null )
-        {
-            final String timeValue = getMatchGroup(GROUP_TIME_VALUE);
-            long testTime = Long.valueOf(timeValue);
-            testCase.setTimeMillis(testTime);
-            info.addTime(testTime);
-        }
+        CppUTestTCSuiteStartedHandler.firstSuite = true;
     }
 
-
-    /**
-     * Updates the test status.
-     *
-     * @param testCase  Test Case
-     */
-    private void updateStatus(CndTestCase testCase)
-    {
-        final String ignored = getMatchGroup(GROUP_IGNORED);
-
-        if( ignored != null )
-        {
-            testCase.setSkipped();
-        }
-    }
 }

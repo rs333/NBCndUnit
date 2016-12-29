@@ -1,7 +1,7 @@
 /*
  * NBCndUnit - C/C++ unit tests for NetBeans.
  * Copyright (C) 2015-2016  offa
- * 
+ *
  * This file is part of NBCndUnit.
  *
  * NBCndUnit is free software: you can redistribute it and/or modify
@@ -17,32 +17,21 @@
  * You should have received a copy of the GNU General Public License
  * along with NBCndUnit.  If not, see <http://www.gnu.org/licenses/>.
  */
-package bv.offa.netbeans.cnd.unittest;
 
-import static org.hamcrest.core.IsCollectionContaining.hasItems;
+package bv.offa.netbeans.cnd.unittest.cpputest.teamcity;
+
 import static org.junit.Assert.*;
 import org.junit.Test;
+import org.netbeans.modules.cnd.testrunner.spi.TestHandlerFactoryProvider;
 
-public class InstallerTest
+public class CppUTestTCTestHandlerFactoryProviderTest
 {
 
     @Test
-    public void installerHasAllFriends()
+    public void getFactoryReturnsInstance()
     {
-        final String requiredFriends[] = new String[]
-        {
-            "org.netbeans.modules.cnd.testrunner",
-            "org.netbeans.modules.gsf.testrunner",
-            "org.netbeans.modules.gsf.testrunner.ui",
-            "org.netbeans.modules.cnd.modelutil",
-            "org.netbeans.modules.cnd.makeproject",
-            "org.netbeans.modules.cnd.api.model",
-            "org.netbeans.modules.cnd",
-            "org.netbeans.modules.cnd.utils"
-        };
-        
-        Installer installer = new Installer();
-        assertThat(installer.getTargetModules(), hasItems(requiredFriends));
+        TestHandlerFactoryProvider provider = new CppUTestTCTestHandlerFactoryProvider();
+        assertEquals(CppUTestTCTestHandlerFactory.class, provider.getFactory().getClass());
     }
 
 }
