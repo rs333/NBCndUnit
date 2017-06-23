@@ -1,12 +1,11 @@
 language: java
 
 dist: trusty
-sudo: required  # Workaround for #25
 
 jdk:
     - openjdk7
     - openjdk8
-    - oraclejdk7
+    #- oraclejdk7 # Broken on Travis (#28, #25)
     - oraclejdk8
 
 cache:
