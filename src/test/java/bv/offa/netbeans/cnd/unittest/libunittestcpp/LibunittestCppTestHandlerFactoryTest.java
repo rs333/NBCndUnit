@@ -23,19 +23,21 @@ package bv.offa.netbeans.cnd.unittest.libunittestcpp;
 import bv.offa.netbeans.cnd.unittest.api.CndTestHandler;
 import bv.offa.netbeans.cnd.unittest.api.TestFramework;
 import bv.offa.netbeans.cnd.unittest.ui.TestRunnerUINodeFactory;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.netbeans.modules.cnd.testrunner.spi.TestHandlerFactory;
-import org.netbeans.modules.cnd.testrunner.spi.TestRecognizerHandler;
 import org.netbeans.modules.gsf.testrunner.ui.api.Manager;
 
+@Tag("Test-Framework")
+@Tag("LibUnittestCpp")
 public class LibunittestCppTestHandlerFactoryTest
 {
     private TestHandlerFactory factory;
 
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         factory = new LibunittestCppTestHandlerFactory();
@@ -70,10 +72,10 @@ public class LibunittestCppTestHandlerFactoryTest
     @Test
     public void allHandlersForFramework()
     {
-        for( TestRecognizerHandler h : factory.createHandlers() )
+        factory.createHandlers().forEach((h) ->
         {
             assertEquals(TestFramework.LIBUNITTESTCPP, ((CndTestHandler) h).getTestFramework());
-        }
+        });
     }
 
 }

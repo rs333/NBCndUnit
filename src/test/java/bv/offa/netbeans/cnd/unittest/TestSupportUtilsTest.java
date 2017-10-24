@@ -23,11 +23,10 @@ package bv.offa.netbeans.cnd.unittest;
 import bv.offa.netbeans.cnd.unittest.api.CndTestCase;
 import bv.offa.netbeans.cnd.unittest.api.CndTestSuite;
 import bv.offa.netbeans.cnd.unittest.api.TestFramework;
-import static org.junit.Assert.*;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import org.netbeans.api.project.Project;
@@ -36,16 +35,15 @@ import org.netbeans.modules.gsf.testrunner.api.TestSession;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Lookup;
 
+@Tag("util")
 public class TestSupportUtilsTest
 {
     private static final String CASE_NAME = "testCase";
     private static final String SUITE_NAME = "TestSuite";
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
     private static TestSession testSessionMock;
     private static Project projectMock;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass()
     {
         testSessionMock = mock(TestSession.class);

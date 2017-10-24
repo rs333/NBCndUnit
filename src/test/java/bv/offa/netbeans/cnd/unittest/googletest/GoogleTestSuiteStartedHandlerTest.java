@@ -26,10 +26,11 @@ import static bv.offa.netbeans.cnd.unittest.testhelper.Helper.checkedMatch;
 import static bv.offa.netbeans.cnd.unittest.testhelper.Helper.createCurrentTestSuite;
 import static bv.offa.netbeans.cnd.unittest.testhelper.TestMatcher.matchesTestSuite;
 import java.util.regex.Matcher;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
@@ -47,6 +48,8 @@ import org.netbeans.modules.gsf.testrunner.api.TestSuite;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Lookup;
 
+@Tag("Test-Framework")
+@Tag("GoogleTest")
 public class GoogleTestSuiteStartedHandlerTest
 {
     private static final TestFramework FRAMEWORK = TestFramework.GOOGLETEST;
@@ -56,7 +59,7 @@ public class GoogleTestSuiteStartedHandlerTest
     private TestSession session;
     private ManagerAdapter manager;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass()
     {
         project = mock(Project.class);
@@ -66,7 +69,7 @@ public class GoogleTestSuiteStartedHandlerTest
         report = new Report("suite", project);
     }
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         handler = new GoogleTestSuiteStartedHandler();
@@ -102,7 +105,7 @@ public class GoogleTestSuiteStartedHandlerTest
         handler.updateUI(manager, session);
         verify(manager).testStarted(session);
     }
-    
+
     @Test
     public void updateUIStartsStartsTestBeforeSuite()
     {
@@ -112,7 +115,7 @@ public class GoogleTestSuiteStartedHandlerTest
         inOrder.verify(manager).testStarted(any(TestSession.class));
         inOrder.verify(manager).displaySuiteRunning(any(TestSession.class), any(CndTestSuite.class));
     }
-    
+
     @Test
     public void updateUIDisplaysReportIfNotFirstTest()
     {
@@ -122,7 +125,7 @@ public class GoogleTestSuiteStartedHandlerTest
         handler.updateUI(manager, session);
         verify(manager).displayReport(session, report);
     }
-    
+
     @Test
     public void updateUIStartsNewSuiteIfFirstSuite()
     {
@@ -131,7 +134,7 @@ public class GoogleTestSuiteStartedHandlerTest
         verify(session).addSuite(argThat(matchesTestSuite("TestSuite")));
         verify(manager).displaySuiteRunning(eq(session), argThat(matchesTestSuite("TestSuite")));
     }
-    
+
     @Test
     public void updateUIStartsNewSuiteIfNewSuiteStarted()
     {
@@ -142,7 +145,7 @@ public class GoogleTestSuiteStartedHandlerTest
         verify(session).addSuite(argThat(matchesTestSuite("TestSuite")));
         verify(manager).displaySuiteRunning(eq(session), argThat(matchesTestSuite("TestSuite")));
     }
-    
+
     @Test
     public void updateUIDoesNothingIfSameSuite()
     {

@@ -22,10 +22,11 @@ package bv.offa.netbeans.cnd.unittest.googletest;
 import bv.offa.netbeans.cnd.unittest.api.ManagerAdapter;
 import static bv.offa.netbeans.cnd.unittest.testhelper.Helper.checkedMatch;
 import java.util.regex.Matcher;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -35,6 +36,8 @@ import org.netbeans.modules.gsf.testrunner.api.TestSession;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Lookup;
 
+@Tag("Test-Framework")
+@Tag("GoogleTest")
 public class GoogleTestSessionFinishedHandlerTest
 {
     private static Project project;
@@ -43,7 +46,7 @@ public class GoogleTestSessionFinishedHandlerTest
     private TestSession session;
     private ManagerAdapter manager;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass()
     {
         project = mock(Project.class);
@@ -53,7 +56,7 @@ public class GoogleTestSessionFinishedHandlerTest
         report = new Report("suite", project);
     }
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         handler = new GoogleTestSessionFinishedHandler();
@@ -80,7 +83,7 @@ public class GoogleTestSessionFinishedHandlerTest
     {
         checkedMatch(handler, "[==========] 1 test from 1 test case ran. (3 ms total)");
         when(session.getReport(3l)).thenReturn(report);
-        
+
         handler.updateUI(manager, session);
         verify(manager).displayReport(session, report);
     }
@@ -92,5 +95,5 @@ public class GoogleTestSessionFinishedHandlerTest
         handler.updateUI(manager, session);
         verify(manager).sessionFinished(session);
     }
-    
+
 }

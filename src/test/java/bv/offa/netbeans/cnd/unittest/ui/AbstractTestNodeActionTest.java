@@ -1,7 +1,7 @@
 /*
  * NBCndUnit - C/C++ unit tests for NetBeans.
  * Copyright (C) 2015-2017  offa
- * 
+ *
  * This file is part of NBCndUnit.
  *
  * NBCndUnit is free software: you can redistribute it and/or modify
@@ -22,10 +22,12 @@ package bv.offa.netbeans.cnd.unittest.ui;
 
 import java.awt.event.ActionEvent;
 import javax.swing.Action;
-import static org.junit.Assert.*;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.netbeans.api.project.Project;
 
+@Tag("ui")
 public class AbstractTestNodeActionTest
 {
 
@@ -35,8 +37,8 @@ public class AbstractTestNodeActionTest
         AbstractTestNodeAction nodeAction = new AbstractTestNodeActionMock("actionName", null);
         assertEquals(nodeAction.getValue(Action.NAME), "actionName");
     }
-    
-    
+
+
     private static class AbstractTestNodeActionMock extends AbstractTestNodeAction
     {
         private static final long serialVersionUID = 1L;
@@ -51,6 +53,6 @@ public class AbstractTestNodeActionTest
         {
             throw new UnsupportedOperationException("Not supported yet.");
         }
-        
+
     }
 }

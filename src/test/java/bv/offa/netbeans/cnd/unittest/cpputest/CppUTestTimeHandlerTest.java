@@ -1,7 +1,7 @@
 /*
  * NBCndUnit - C/C++ unit tests for NetBeans.
  * Copyright (C) 2015-2017  offa
- * 
+ *
  * This file is part of NBCndUnit.
  *
  * NBCndUnit is free software: you can redistribute it and/or modify
@@ -26,12 +26,16 @@ import bv.offa.netbeans.cnd.unittest.api.TestFramework;
 import static bv.offa.netbeans.cnd.unittest.testhelper.Helper.checkedMatch;
 import static bv.offa.netbeans.cnd.unittest.testhelper.TestMatcher.timeIs;
 import java.util.regex.Matcher;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Test;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.*;
 import org.netbeans.modules.gsf.testrunner.api.TestSession;
 
+@Tag("Test-Framework")
+@Tag("CppUTest")
 public class CppUTestTimeHandlerTest
 {
     private static final TestFramework FRAMEWORK = TestFramework.CPPUTEST;
@@ -39,9 +43,9 @@ public class CppUTestTimeHandlerTest
     private CppUTestTimeHandler handler;
     private TestSession session;
     private ManagerAdapter manager;
-    
-    
-    @Before
+
+
+    @BeforeEach
     public void setUp()
     {
         info = new TestSessionInformation();
@@ -49,7 +53,7 @@ public class CppUTestTimeHandlerTest
         session = mock(TestSession.class);
         manager = mock(ManagerAdapter.class);
     }
-    
+
     @Test
     public void parsesDataTime()
     {
@@ -59,7 +63,7 @@ public class CppUTestTimeHandlerTest
         assertTrue(m.matches());
         assertEquals("123", m.group(1));
     }
-    
+
     @Test
     public void updateUIUpdatesTime()
     {
@@ -70,5 +74,5 @@ public class CppUTestTimeHandlerTest
         assertEquals(123l, info.getTimeTotal());
         assertThat(testCase, timeIs(123l));
     }
-    
+
 }

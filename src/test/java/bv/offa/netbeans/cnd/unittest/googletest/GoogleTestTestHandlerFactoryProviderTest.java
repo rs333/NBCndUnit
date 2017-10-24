@@ -1,7 +1,7 @@
 /*
  * NBCndUnit - C/C++ unit tests for NetBeans.
  * Copyright (C) 2015-2017  offa
- * 
+ *
  * This file is part of NBCndUnit.
  *
  * NBCndUnit is free software: you can redistribute it and/or modify
@@ -20,10 +20,13 @@
 
 package bv.offa.netbeans.cnd.unittest.googletest;
 
-import static org.junit.Assert.*;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.netbeans.modules.cnd.testrunner.spi.TestHandlerFactoryProvider;
 
+@Tag("Test-Framework")
+@Tag("GoogleTest")
 public class GoogleTestTestHandlerFactoryProviderTest
 {
     @Test

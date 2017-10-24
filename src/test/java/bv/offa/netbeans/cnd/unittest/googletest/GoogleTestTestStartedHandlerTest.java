@@ -26,14 +26,17 @@ import static bv.offa.netbeans.cnd.unittest.testhelper.TestMatcher.frameworkIs;
 import static bv.offa.netbeans.cnd.unittest.testhelper.TestMatcher.matchesTestCase;
 import java.util.regex.Matcher;
 import static org.hamcrest.CoreMatchers.allOf;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import org.netbeans.modules.gsf.testrunner.api.TestSession;
 
+@Tag("Test-Framework")
+@Tag("GoogleTest")
 public class GoogleTestTestStartedHandlerTest
 {
     private static final TestFramework FRAMEWORK = TestFramework.GOOGLETEST;
@@ -41,7 +44,7 @@ public class GoogleTestTestStartedHandlerTest
     private TestSession session;
     private ManagerAdapter manager;
 
-    @Before
+    @BeforeEach
     public void setUp()
     {
         handler = new GoogleTestTestStartedHandler();
@@ -70,7 +73,7 @@ public class GoogleTestTestStartedHandlerTest
     {
         checkedMatch(handler, "[ RUN      ] TestSuite.testCase");
         handler.updateUI(manager, session);
-        verify(session).addTestCase(argThat(allOf(matchesTestCase("testCase", "TestSuite"), 
+        verify(session).addTestCase(argThat(allOf(matchesTestCase("testCase", "TestSuite"),
                                                     frameworkIs(FRAMEWORK))));
     }
 
