@@ -23,23 +23,20 @@ import bv.offa.netbeans.cnd.unittest.api.CndTestSuite;
 import bv.offa.netbeans.cnd.unittest.api.ManagerAdapter;
 import bv.offa.netbeans.cnd.unittest.api.TestFramework;
 import bv.offa.netbeans.cnd.unittest.testhelper.Helper;
+import static bv.offa.netbeans.cnd.unittest.testhelper.TestCaseSubject.assertThat;
 import static bv.offa.netbeans.cnd.unittest.testhelper.Helper.checkedMatch;
-import static bv.offa.netbeans.cnd.unittest.testhelper.TestMatcher.frameworkIs;
-import static bv.offa.netbeans.cnd.unittest.testhelper.TestMatcher.hasError;
-import static bv.offa.netbeans.cnd.unittest.testhelper.TestMatcher.hasNoError;
-import static bv.offa.netbeans.cnd.unittest.testhelper.TestMatcher.hasStatus;
-import static bv.offa.netbeans.cnd.unittest.testhelper.TestMatcher.matchesTestCase;
-import static bv.offa.netbeans.cnd.unittest.testhelper.TestMatcher.matchesTestSuite;
-import static bv.offa.netbeans.cnd.unittest.testhelper.TestMatcher.sessionIs;
-import static bv.offa.netbeans.cnd.unittest.testhelper.TestMatcher.suiteFrameworkIs;
-import static bv.offa.netbeans.cnd.unittest.testhelper.TestMatcher.timeIs;
+import static bv.offa.netbeans.cnd.unittest.testhelper.MockArgumentMatcher.hasError;
+import static bv.offa.netbeans.cnd.unittest.testhelper.MockArgumentMatcher.hasStatus;
+import static bv.offa.netbeans.cnd.unittest.testhelper.MockArgumentMatcher.isTest;
+import static bv.offa.netbeans.cnd.unittest.testhelper.MockArgumentMatcher.isSuiteOfFramework;
+import static com.google.common.truth.Truth.assertThat;
+import static org.mockito.ArgumentMatchers.argThat;
 import java.util.regex.Matcher;
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
@@ -49,12 +46,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.gsf.testrunner.api.Report;
 import org.netbeans.modules.gsf.testrunner.api.Status;
 import org.netbeans.modules.gsf.testrunner.api.TestSession;
 import org.netbeans.modules.gsf.testrunner.api.TestSuite;
+import org.netbeans.modules.gsf.testrunner.api.Testcase;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Lookup;
 
@@ -90,41 +87,41 @@ public class LibunittestCppTestFinishedHandlerTest
     @Test
     public void matchesSuccessfulTest()
     {
-        assertTrue(handler.matches("test_name::testA ... [1.551e-05s] ok"));
-        assertTrue(handler.matches("test_name::testB ... [0.000108249s] ok"));
-        assertTrue(handler.matches("test_name::testC ... [477.100486s] ok"));
-        assertTrue(handler.matches("test_suite::test_name::test_case ... [9.217e-06s] ok"));
+        assertThat(handler.matches("test_name::testA ... [1.551e-05s] ok")).isTrue();
+        assertThat(handler.matches("test_name::testB ... [0.000108249s] ok")).isTrue();
+        assertThat(handler.matches("test_name::testC ... [477.100486s] ok")).isTrue();
+        assertThat(handler.matches("test_suite::test_name::test_case ... [9.217e-06s] ok")).isTrue();
     }
 
     @Test
     public void parseDataSuccessfulTest()
     {
         Matcher m = checkedMatch(handler, "test_name::testA ... [1.551e-05s] ok");
-        assertEquals("test_name", m.group(1));
-        assertEquals("testA", m.group(2));
-        assertEquals("1.551e-05", m.group(3));
-        assertEquals("ok", m.group(4));
+        assertThat(m.group(1)).isEqualTo("test_name");
+        assertThat(m.group(2)).isEqualTo("testA");
+        assertThat(m.group(3)).isEqualTo("1.551e-05");
+        assertThat(m.group(4)).isEqualTo("ok");
     }
 
     @Test
     public void parseDataFailedTest()
     {
         Matcher m = checkedMatch(handler, "test_name::testB ... [0.000108249s] FAIL");
-        assertEquals("test_name", m.group(1));
-        assertEquals("testB", m.group(2));
-        assertEquals("0.000108249", m.group(3));
-        assertEquals("FAIL", m.group(4));
+        assertThat(m.group(1)).isEqualTo("test_name");
+        assertThat(m.group(2)).isEqualTo("testB");
+        assertThat(m.group(3)).isEqualTo("0.000108249");
+        assertThat(m.group(4)).isEqualTo("FAIL");
     }
 
     @Test
     public void parseDataIgnoredTestCase()
     {
         Matcher m = handler.match("TestSuite::testExample::test ... [0s] SKIP A message");
-        assertTrue(m.find());
-        assertEquals("TestSuite", m.group(1));
-        assertEquals("testExample::test", m.group(2));
-        assertEquals("0", m.group(3));
-        assertEquals("SKIP", m.group(4));
+        assertThat(m.find()).isTrue();
+        assertThat(m.group(1)).isEqualTo("TestSuite");
+        assertThat(m.group(2)).isEqualTo("testExample::test");
+        assertThat(m.group(3)).isEqualTo("0");
+        assertThat(m.group(4)).isEqualTo("SKIP");
     }
 
     @Test
@@ -160,10 +157,8 @@ public class LibunittestCppTestFinishedHandlerTest
     {
         checkedMatch(handler, "TestSuite::testCase ... [1.551e-05s] ok");
         handler.updateUI(manager, session);
-        verify(session).addSuite(argThat(allOf(matchesTestSuite("TestSuite"),
-                                                suiteFrameworkIs(FRAMEWORK))));
-        verify(manager).displaySuiteRunning(eq(session), argThat(allOf(matchesTestSuite("TestSuite"),
-                                                                        suiteFrameworkIs(FRAMEWORK))));
+        verify(session).addSuite(argThat(isSuiteOfFramework("TestSuite", FRAMEWORK)));
+        verify(manager).displaySuiteRunning(eq(session), argThat(isSuiteOfFramework("TestSuite", FRAMEWORK)));
     }
 
     @Test
@@ -172,10 +167,8 @@ public class LibunittestCppTestFinishedHandlerTest
         checkedMatch(handler, "TestSuite::testCase ... [1.551e-05s] ok");
         Helper.createCurrentTestSuite("TestSuit", FRAMEWORK, session);
         handler.updateUI(manager, session);
-        verify(session).addSuite(argThat(allOf(matchesTestSuite("TestSuite"),
-                                                suiteFrameworkIs(FRAMEWORK))));
-        verify(manager).displaySuiteRunning(eq(session), argThat(allOf(matchesTestSuite("TestSuite"),
-                                                                        suiteFrameworkIs(FRAMEWORK))));
+        verify(session).addSuite(argThat(isSuiteOfFramework("TestSuite", FRAMEWORK)));
+        verify(manager).displaySuiteRunning(eq(session), argThat(isSuiteOfFramework("TestSuite", FRAMEWORK)));
     }
 
     @Test
@@ -195,7 +188,7 @@ public class LibunittestCppTestFinishedHandlerTest
     {
         checkedMatch(handler, "TestSuite::testCase ... [1.551e-05s] ok");
         handler.updateUI(manager, session);
-        verify(session).addTestCase(argThat(matchesTestCase("testCase", "TestSuite")));
+        verify(session).addTestCase(argThat(isTest("TestSuite", "testCase")));
     }
 
     @Test
@@ -203,11 +196,13 @@ public class LibunittestCppTestFinishedHandlerTest
     {
         checkedMatch(handler, "TestSuite::testCase ... [477.100486s] ok");
         handler.updateUI(manager, session);
-        verify(session).addTestCase(argThat(allOf(matchesTestCase("testCase", "TestSuite"),
-                                                    frameworkIs(FRAMEWORK),
-                                                    sessionIs(session),
-                                                    timeIs(477100),
-                                                    hasNoError())));
+        final ArgumentCaptor<Testcase> captor = ArgumentCaptor.forClass(Testcase.class);
+        verify(session).addTestCase(captor.capture());
+        assertThat(captor.getValue()).isTestCase("TestSuite", "testCase");
+        assertThat(captor.getValue()).isFramework(FRAMEWORK);
+        assertThat(captor.getValue()).isSession(session);
+        assertThat(captor.getValue()).isTime(477100);
+        assertThat(captor.getValue()).hasNoError();
     }
 
     @Test

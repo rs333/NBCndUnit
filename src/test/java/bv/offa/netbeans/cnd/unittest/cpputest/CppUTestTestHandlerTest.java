@@ -24,34 +24,31 @@ import bv.offa.netbeans.cnd.unittest.api.CndTestSuite;
 import bv.offa.netbeans.cnd.unittest.api.ManagerAdapter;
 import bv.offa.netbeans.cnd.unittest.api.TestFramework;
 import static bv.offa.netbeans.cnd.unittest.testhelper.Helper.checkedMatch;
-import static bv.offa.netbeans.cnd.unittest.testhelper.TestMatcher.frameworkIs;
-import static bv.offa.netbeans.cnd.unittest.testhelper.TestMatcher.hasNoError;
-import static bv.offa.netbeans.cnd.unittest.testhelper.TestMatcher.hasStatus;
-import static bv.offa.netbeans.cnd.unittest.testhelper.TestMatcher.matchesTestCase;
-import static bv.offa.netbeans.cnd.unittest.testhelper.TestMatcher.matchesTestSuite;
-import static bv.offa.netbeans.cnd.unittest.testhelper.TestMatcher.sessionIs;
-import static bv.offa.netbeans.cnd.unittest.testhelper.TestMatcher.suiteFrameworkIs;
-import static bv.offa.netbeans.cnd.unittest.testhelper.TestMatcher.timeIs;
+import static bv.offa.netbeans.cnd.unittest.testhelper.MockArgumentMatcher.hasStatus;
+import static bv.offa.netbeans.cnd.unittest.testhelper.MockArgumentMatcher.isSuiteOfFramework;
+import static bv.offa.netbeans.cnd.unittest.testhelper.MockArgumentMatcher.isTest;
+import static bv.offa.netbeans.cnd.unittest.testhelper.TestCaseSubject.assertThat;
+import static com.google.common.truth.Truth.assertThat;
 import java.util.regex.Matcher;
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.InOrder;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.gsf.testrunner.api.Report;
 import org.netbeans.modules.gsf.testrunner.api.Status;
 import org.netbeans.modules.gsf.testrunner.api.TestSession;
+import org.netbeans.modules.gsf.testrunner.api.Testcase;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Lookup;
 
@@ -90,40 +87,40 @@ public class CppUTestTestHandlerTest
     public void matchesTestCaseAndDetectsIgnored()
     {
         Matcher m = checkedMatch(handler, "IGNORE_TEST(TestSuite, testCase) - 7 ms");
-        assertNotNull(m.group(1));
+        assertThat(m.group(1)).isNotNull();
     }
 
     @Test
     public void parsesDataTestCase()
     {
         Matcher m = checkedMatch(handler, "TEST(TestSuite, testCase) - 84 ms");
-        assertEquals("TEST(TestSuite, testCase) - 84 ms", m.group());
-        assertEquals("TestSuite", m.group(2));
-        assertEquals("testCase", m.group(3));
-        assertEquals("84", m.group(5));
+        assertThat(m.group()).isEqualTo("TEST(TestSuite, testCase) - 84 ms");
+        assertThat(m.group(2)).isEqualTo("TestSuite");
+        assertThat(m.group(3)).isEqualTo("testCase");
+        assertThat(m.group(5)).isEqualTo("84");
     }
 
     @Test
     public void parsesDataTestCaseWhichFailed()
     {
         Matcher m = checkedMatch(handler, "TEST(TestSuite, testThatFailed)");
-        assertEquals("TestSuite", m.group(2));
-        assertEquals("testThatFailed", m.group(3));
-        assertNull(m.group(4));
+        assertThat(m.group(2)).isEqualTo("TestSuite");
+        assertThat(m.group(3)).isEqualTo("testThatFailed");
+        assertThat(m.group(4)).isNull();
     }
 
     @Test
     public void rejectsMalformedTestCase()
     {
-        assertFalse(handler.matches("TEST(TestSuite, testCase) - 1"));
-        assertFalse(handler.matches("TEST(TestSuite, testCase) - a"));
-        assertFalse(handler.matches("TEST(TestSuite, testCase) - abc ms"));
-        assertFalse(handler.matches("TEST(TestSuite, testCase) - ms"));
-        assertFalse(handler.matches("TEST(TestSuite, testCase) -  ms"));
-        assertFalse(handler.matches("TEST(TestSuite, testCase) - 11 ms "));
-        assertFalse(handler.matches("TEST(TestSuite, )"));
-        assertFalse(handler.matches("TEST(TestSuite, testCase, wrong) - 5 ms"));
-        assertFalse(handler.matches("TEST(TestSuite, testCase) - 5 ms - 7 ms"));
+        assertThat(handler.matches("TEST(TestSuite, testCase) - 1")).isFalse();
+        assertThat(handler.matches("TEST(TestSuite, testCase) - a")).isFalse();
+        assertThat(handler.matches("TEST(TestSuite, testCase) - abc ms")).isFalse();
+        assertThat(handler.matches("TEST(TestSuite, testCase) - ms")).isFalse();
+        assertThat(handler.matches("TEST(TestSuite, testCase) -  ms")).isFalse();
+        assertThat(handler.matches("TEST(TestSuite, testCase) - 11 ms ")).isFalse();
+        assertThat(handler.matches("TEST(TestSuite, )")).isFalse();
+        assertThat(handler.matches("TEST(TestSuite, testCase, wrong) - 5 ms")).isFalse();
+        assertThat(handler.matches("TEST(TestSuite, testCase) - 5 ms - 7 ms")).isFalse();
     }
 
     @Test
@@ -137,7 +134,6 @@ public class CppUTestTestHandlerTest
             "TEST(TestSuite3, testCase1) - 0 ms",
         };
 
-        final long expected = 17005L + 8L + 25L;
         long time = 0L;
 
         for( String line : input )
@@ -146,13 +142,13 @@ public class CppUTestTestHandlerTest
             time += Long.valueOf(m.group(5));
         }
 
-        assertEquals(expected, time);
+        assertThat(time).isEqualTo(17005L + 8L + 25L);
     }
 
     @Test
     public void matchesTestCaseWithOutputNoTime()
     {
-        assertTrue(handler.matches("TEST(TestSuite, testCase)"));
+        assertThat(handler.matches("TEST(TestSuite, testCase)")).isTrue();
     }
 
     @Test
@@ -188,10 +184,8 @@ public class CppUTestTestHandlerTest
     {
         checkedMatch(handler, "TEST(TestSuite, testCase) - 84 ms");
         handler.updateUI(manager, session);
-        verify(session).addSuite(argThat(allOf(matchesTestSuite("TestSuite"),
-                                                suiteFrameworkIs(FRAMEWORK))));
-        verify(manager).displaySuiteRunning(eq(session), argThat(allOf(matchesTestSuite("TestSuite"),
-                                                                        suiteFrameworkIs(FRAMEWORK))));
+        verify(session).addSuite(argThat(isSuiteOfFramework("TestSuite", FRAMEWORK)));
+        verify(manager).displaySuiteRunning(eq(session), argThat(isSuiteOfFramework("TestSuite", FRAMEWORK)));
     }
 
     @Test
@@ -199,7 +193,7 @@ public class CppUTestTestHandlerTest
     {
         checkedMatch(handler, "TEST(TestSuite, testCase) - 84 ms");
         handler.updateUI(manager, session);
-        verify(session).addTestCase(argThat(matchesTestCase("testCase", "TestSuite")));
+        verify(session).addTestCase(argThat(isTest("TestSuite", "testCase")));
     }
 
     @Test
@@ -207,11 +201,13 @@ public class CppUTestTestHandlerTest
     {
         checkedMatch(handler, "TEST(TestSuite, testCase) - 84 ms");
         handler.updateUI(manager, session);
-        verify(session).addTestCase(argThat(allOf(matchesTestCase("testCase", "TestSuite"),
-                                                    frameworkIs(FRAMEWORK),
-                                                    sessionIs(session),
-                                                    timeIs(84),
-                                                    hasNoError())));
+        final ArgumentCaptor<Testcase> captor = ArgumentCaptor.forClass(Testcase.class);
+        verify(session).addTestCase(captor.capture());
+        assertThat(captor.getValue()).isTestCase("TestSuite", "testCase");
+        assertThat(captor.getValue()).isFramework(FRAMEWORK);
+        assertThat(captor.getValue()).isSession(session);
+        assertThat(captor.getValue()).isTime(84L);
+        assertThat(captor.getValue()).hasNoError();
     }
 
     @Test
@@ -227,6 +223,6 @@ public class CppUTestTestHandlerTest
     {
         checkedMatch(handler, "TEST(TestSuite, testCase)");
         handler.updateUI(manager, session);
-        verify(session).addTestCase(argThat(matchesTestCase("testCase", "TestSuite")));
+        verify(session).addTestCase(argThat(isTest("TestSuite", "testCase")));
     }
 }
